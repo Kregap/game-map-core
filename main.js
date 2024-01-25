@@ -136,7 +136,7 @@ map.setView(game_start_center, 1, {animate: false})
 const attributionControl =  L.control.attribution()
 const atr = attribution
 atr.push(
-  `<a href="https://github.com/Kregap/craftopia-map">Core v${coreVersion}</a>`
+  `<a href="https://github.com/Kregap/game-map-core">Core v${coreVersion}</a>`
 )
 atr.forEach((a) => {
   attributionControl.addAttribution(a)
