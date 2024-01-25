@@ -11,7 +11,7 @@ const credits = await downloadCredits()
 L.Control.Credits = L.Control.extend({
   options: {
     position: 'bottomleft',
-    iconUrl: '/core/images/icon-credits.png',
+    iconUrl: '/game-map-core/images/icon-credits.png',
     header: 'Credits',
   },
 

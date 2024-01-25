@@ -59,10 +59,10 @@ export function getResultElement(type, clickCallback) {
   let iconUrl = type['item']['iconUrl']
   switch (type['item']['typeMarkerType']) {
     case 'line':
-      iconUrl = '/core/images/line-icon.png'
+      iconUrl = '/game-map-core/images/line-icon.png'
       break
     case 'area':
-      iconUrl = '/core/images/area-icon.png'
+      iconUrl = '/game-map-core/images/area-icon.png'
       break
     default:
       iconUrl = type['item']['iconUrl']
