@@ -10,7 +10,7 @@ L.Control.Language = L.Control.extend({
     language: 'en',
     position: 'topleft',
     selected: false,
-    iconUrl: '/game-map-core/images/flag-icons/united-kingdom.webp',
+    iconUrl: 'game-map-core/images/flag-icons/united-kingdom.webp',
     selectionCallback: function () { console.log('Click callback triggererd on a flag!') }
   },
 

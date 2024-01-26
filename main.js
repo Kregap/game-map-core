@@ -227,7 +227,7 @@ languages.forEach(lang => {
     languageModule.getControl({
       id: `${lang}-flag`,
       language: lang,
-      iconUrl: `/game-map-core/images/flag-icons/${lang}.webp`,
+      iconUrl: `game-map-core/images/flag-icons/${lang}.webp`,
       selected: (lang == selectedLanguage) ? true : false,
       selectionCallback: translate,
     }),
