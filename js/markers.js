@@ -25,29 +25,31 @@ const getMeta = (url) =>
   });
 
 function arraysFromString(text) {
-  const arrays = []
-  let txt = text.replace(/\s/g, '')  // Remove white characters
-  const prefix = txt.substring(0, 2)
-  txt = txt.slice(1, -1)  // Remove outer brackets
-
-  if (prefix == '[[') {
-    txt = txt.slice(1, -1)
-    // when it's array of arrays
-    const subStrings = txt.split('],[')
-    subStrings.forEach((arrText) => {
-      arrays.push([
-        parseInt(arrText.split(',')[0]),
-        parseInt(arrText.split(',')[1])
-      ])
-    })
-  } else {
-    // when it's flat array
-    return [
-      parseInt(txt.split(',')[0]),
-      parseInt(txt.split(',')[1])
-    ]
+  // console.log(text)
+  const rBracket = /\[/g
+  const rPoint = /\[[^\[\]]*\]/g
+  const rRealNumber = /[-+\d\.]+/g
+  // check for multiple points
+  let isSingle = true
+  if (text.match(rBracket) != null && text.match(rBracket).length > 2) {
+    isSingle = false
   }
-  return arrays
+
+  let points = []
+  if (isSingle) {
+    // SINGLE POINT
+    // extract all real numbers
+    points = text.match(rRealNumber)
+  } else {
+    // MULTIPLE POINTS
+    // extract all groups in brackets
+    const raw_points = text.match(rPoint)
+    // extract all real numbers
+    points = raw_points.map((x) => x.match(rRealNumber))
+  }
+
+  // console.log(points)
+  return points
 }
 
 export async function getTree(defaultCategoryName, language) {
@@ -167,7 +169,7 @@ export async function getTree(defaultCategoryName, language) {
           switch (theType['markerType']) {
             case 'point':
               leafletMarkers[category][group][type]['markers'].push(L.marker(
-                marker['coordinates'],
+                [marker['coordinates'].at(0), marker['coordinates'].at(-1)],
                 {
                   icon: L.icon({
                     iconUrl: theType['iconUrl'],
@@ -179,13 +181,14 @@ export async function getTree(defaultCategoryName, language) {
               break
             case 'line':
               leafletMarkers[category][group][type]['markers'].push(L.polyline(
-                marker['coordinates'],
+                marker['coordinates'].map(x => [x.at(0), x.at(-1)]),
                 { color: theType['color'] }
               ).bindTooltip(`${marker['id']}. ${type}`))
               break
             case 'area':
+              const xzPoints = marker['coordinates'].map(x => [x.at(0), x.at(-1)])
               leafletMarkers[category][group][type]['markers'].push(L.polygon(
-                [].concat(marker['coordinates'], marker['coordinates'].slice(-1)),
+                [].concat(xzPoints, xzPoints.slice(-1)),
                 { color: theType['color'], weight: 4, fillOpacity: 0.4 }
               ).bindTooltip(`${marker['id']}. ${type}`))
               break
@@ -196,13 +199,19 @@ export async function getTree(defaultCategoryName, language) {
           const lastLeafletMarker = leafletMarkers[category][group][type]['markers'][lastMarkerId]
 
           // Add popup details
+          const markerName = `${marker['id']}. ${type}`
+          let markerCoordinates = ``
+          if (theType['markerType'] == 'point') {
+            markerCoordinates = `[${marker['coordinates'].join(', ')}]`
+          }
+
           let details = `
           <div>
             <div class="coordinates">
-              [${String(marker['coordinates']).replaceAll(',', ', ')}]
+              ${markerCoordinates}
             </div>
             <div class="name">
-              ${marker['id']}. ${type}
+              ${markerName}
             </div>
           </div>
           `
